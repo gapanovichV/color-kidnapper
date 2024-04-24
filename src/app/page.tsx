@@ -1,95 +1,62 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
 
-export default function Home() {
+import React, { useState } from "react"
+import clsx from "clsx"
+import ColorThief from "colorthief"
+import DisplayImage from "@/components/DisplayImage"
+import ListItem from "@/components/ListItem"
+import { CiSaveUp2 } from "react-icons/ci"
+import styles from "./page.module.scss"
+
+const Home = () => {
+  const [uploadImage, setUploadImage] = useState<string>("")
+  const [colorsPalette, setColorsPalette] = useState<number[][]>([])
+
+  const handleUploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0]
+
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = async (event) => {
+        const img = new Image()
+
+        img.onload = () => {
+          const colorThief = new ColorThief()
+          const colorPalette = colorThief.getPalette(img, 6)
+          setColorsPalette(colorPalette)
+          setUploadImage(img.src)
+        }
+        img.src = event.target?.result as string
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <header className={clsx(styles.header)}>
+        <h1>Color Kidnapper</h1>
+        <div className={clsx(styles.input)}>
+          <label htmlFor="file">
+            <CiSaveUp2 size="1.25rem" /> Upload Image
+          </label>
+          <input
+            id="file"
+            type="file"
+            accept={"image/*"}
+            hidden
+            onChange={(e) => handleUploadImage(e)}
+          />
         </div>
-      </div>
+      </header>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+      <main className={clsx(styles.main)}>
+        <div className={clsx(styles.content)}>
+          <DisplayImage uploadImage={uploadImage} />
+          <ListItem colorsPalette={colorsPalette} />
+        </div>
+      </main>
+    </>
+  )
 }
+export default Home
