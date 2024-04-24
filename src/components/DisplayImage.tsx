@@ -19,7 +19,7 @@ const DisplayImage = ({ uploadImage, className }: DisplayImageProps) => {
           alt="you img"
         />
       ) : (
-        <h2>Put An Image Here...</h2>
+        <h2>Put image here...</h2>
       )}
     </div>
   )

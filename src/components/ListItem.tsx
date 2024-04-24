@@ -37,9 +37,10 @@ export const Color = ({ hex }: ColorProps) => {
 }
 
 const ListItem = ({ className, colorsPalette }: ListItemProps) => {
-  const rgbToHex = (r: number, g: number, b: number) =>
+
+  const rgbToHex = (r: number, g: number, b: number): string =>
     `#${[r, g, b]
-      .map((x) => {
+      .map((x: number) => {
         const hex = x.toString(16)
         return hex.length === 1 ? `0${hex}` : hex
       })
